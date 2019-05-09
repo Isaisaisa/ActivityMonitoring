@@ -36,6 +36,8 @@ class FeatureExtractor:
                 featureVectors[i, j * 5 + 13] = tsCalc.percentage_of_reoccurring_datapoints_to_all_datapoints(data[i, :, j])
                 featureVectors[i, j * 5 + 14] = tsCalc.mean_second_derivative_central(data[i, :, j])
 
-                # number of prominence peaks in sequence
-                featureVectors[i, j * 5 + 15] = len(find_peaks(data[i, :, j], prominence=0.009)[0])
+                # # number of prominence peaks in sequence
+                # featureVectors[i, j * 5 + 15] = len(find_peaks(data[i, :, j], prominence=0.009)[0])
+                # # crossing the x-axis at 0.0
+                # featureVectors[i, j * 5 + 16] = tsCalc.number_crossing_m(data[i, :, j], 0.0)
         return featureVectors

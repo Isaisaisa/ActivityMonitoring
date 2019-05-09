@@ -2,9 +2,11 @@ import DataLoader as loader
 import numpy as np
 import PreProcessing as preProcessor
 import FeatureExtractor as fEx
+import FeatureSelection as fSe
 from sklearn.neural_network import MLPClassifier
 import sklearn.metrics as acc
 
+SELECT_FEATURES = False
 
 ## Load the data and preprocess it
 dataLoader = loader.DataLoader()
@@ -82,6 +84,12 @@ if (True):
     gyroscopeFeatureVector = dataLoader.loadData("Features\\Training", "gyroscope")
     linearAccelerationFeatureVector = dataLoader.loadData("Features\\Training", "linearAcceleration")
     magnetometerFeatureVector = dataLoader.loadData("Features\\Training", "magnetometer")
+
+## Feature Selection
+if SELECT_FEATURES:
+    fSelector = fSe.FeatureSelection()
+    pcaAccelerometer = fSelector.selectFeaturesByPCA(accelerometerFeatureVector)
+
 
 ## Train the Classifier
 if(True):
