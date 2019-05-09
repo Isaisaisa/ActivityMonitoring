@@ -4,6 +4,7 @@
 import tsfresh as ts
 import tsfresh.feature_extraction.feature_calculators as tsCalc
 import numpy as np
+from scipy.signal import find_peaks
 
 class FeatureExtractor:
 
@@ -35,4 +36,6 @@ class FeatureExtractor:
                 featureVectors[i, j * 5 + 13] = tsCalc.percentage_of_reoccurring_datapoints_to_all_datapoints(data[i, :, j])
                 featureVectors[i, j * 5 + 14] = tsCalc.mean_second_derivative_central(data[i, :, j])
 
+                # number of prominence peaks in sequence
+                featureVectors[i, j * 5 + 15] = len(find_peaks(data[i, :, j], prominence=0.009)[0])
         return featureVectors
