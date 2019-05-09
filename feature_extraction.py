@@ -39,36 +39,37 @@ def feature_extraction_process():
         np.save('norm_accelerometer.npy', normalized_data)
     else:
         normalized_data = np.load('norm_accelerometer.npy')
-    # Feature extraction
-    # 1692
-    # columns = ['id'] + list(range(normalized_data.shape[0]))
-    # # 800
-    # index = range(normalized_data.shape[1])
-    # my_data = normalized_data[:,:,0].T
-    # print(my_data.shape)
-    # new_col = np.array(range(normalized_data.shape[1]))[..., None]  # None keeps (n, 1) shape
-    # all_data = np.append(new_col, my_data, axis=1)
-    # # df.shape => (1692, 801) (rows, columns)
-    # df = pd.DataFrame(all_data, index=index, columns=columns)
-    # df2 = tsfresh.extract_features(df, column_id='id')
     # Does not really make sense, because we normalized timeseries so it is close to 0
     mean = np.mean(normalized_data, axis=1)
     median = np.median(normalized_data, axis=1)
     maxi = np.max(normalized_data, axis=1)
     mini = np.min(normalized_data, axis=1)
     # peaks_arr = np.empty((1692, 800, 3))
-    peaks_arr = []
+    peaks_arr_first_channel = []
+    peaks_arr_second_channel = []
+    peaks_arr_third_channel = []
     # only of first timeseries of three
-    for idx, timeserie in enumerate(normalized_data[:,:,0]):
-        # print(timeserie.shape)
-        peaks = find_peaks(timeserie, distance=20)
-        peaks_arr.append(list(peaks[0]))
-    ## np.arange(0., 4000., step=5)
-    t = np.arange(start=0., stop=4000., step=4000 / normalized_data[0,:,0].shape[0])
-    number_sequence = 200
-    print(np.array(peaks_arr[0])*5)
-    plt.plot(t, normalized_data[number_sequence,:,0], 'b-',
-             np.array(peaks_arr[number_sequence])*5, normalized_data[number_sequence,:,0][peaks_arr[number_sequence]],'r+')
-    plt.show()
+    for timeserie in normalized_data[:,:,0]:
+        # prominence – Required prominence of peaks. Either a number, ``None``, an array matching `x` or a 2-element
+        # sequence of the former. The first element is always interpreted as the minimal and the second, if supplied,
+        # as the maximal required prominence.
+        peaks = find_peaks(timeserie, prominence=0.009)
+        peaks_arr_first_channel.append(list(peaks[0]))
+    ## np.arange(0., 4000., step
+    if plot:
+        t = np.arange(start=0., stop=4000., step=4000 / normalized_data[0,:,0].shape[0])
+        number_sequence = 200
+        print(np.array(peaks_arr_first_channel[0])*5)
+        plt.plot(t, normalized_data[number_sequence,:,0], 'b-',
+                 np.array(peaks_arr_first_channel[number_sequence])*5, normalized_data[number_sequence,:,0][peaks_arr_first_channel[number_sequence]],'r+')
+        plt.show()
+
+    for timeserie in normalized_data[:, :, 1]:
+        peaks = find_peaks(timeserie, prominence=0.009)
+        peaks_arr_second_channel.append(list(peaks[0]))
+
+    for timeserie in normalized_data[:, :, 2]:
+        peaks = find_peaks(timeserie, prominence=0.009)
+        peaks_arr_third_channel.append(list(peaks[0]))
 
 feature_extraction_process()
