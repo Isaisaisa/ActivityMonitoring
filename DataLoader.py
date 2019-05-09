@@ -2,15 +2,16 @@
 ## With this
 
 import numpy as np
+import config_dev as config
 
 class DataLoader:
 
     ## Konstruktor um die Daten zu laden
     def __init__(self):
         ##self.data = []
-        self.trainingPath = "C:\\Users\\Dominik\\OneDrive\\\Master\\3. Semester_SS19\\Medical Data Science\\Übung\\Übung1\\Data\\CogAge-blho\\blho\\training\\"
-        self.testPath = "C:\\Users\\Dominik\\OneDrive\\\Master\\3. Semester_SS19\\Medical Data Science\\Übung\\Übung1\\Data\\CogAge-blho\\blho\\testing\\"
-        self.savePath = "C:\\Users\\Dominik\\OneDrive\\Master\\3. Semester_SS19\\Medical Data Science\\Übung\\Übung1\\Data\\Save\\"
+        self.trainingPath = config.TRAININGFILES
+        self.testPath = config.TESTINGFILES
+        self.savePath = config.SAVEPATH
 
     def loadOriginalTrainingData(self):
         accelerometer = np.load(self.trainingPath + "trainAccelerometer.npy")
