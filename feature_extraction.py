@@ -8,12 +8,12 @@ import numpy as np
 from scipy import signal
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
-import config
+import config_dev as config
 from scipy.signal import find_peaks, find_peaks_cwt
 
 accelerometer = config.TRAININGFILES + '\\trainAccelerometer.npy'
 accelerometer_data = np.load(accelerometer)
-plot = False
+plot = True
 
 
 def normalize_data(timesequence):
@@ -58,11 +58,12 @@ def feature_extraction_process():
     ## np.arange(0., 4000., step
     if plot:
         t = np.arange(start=0., stop=4000., step=4000 / normalized_data[0,:,0].shape[0])
-        number_sequence = 200
+        number_sequences = [2, 10, 15, 200]
         print(np.array(peaks_arr_first_channel[0])*5)
-        plt.plot(t, normalized_data[number_sequence,:,0], 'b-',
-                 np.array(peaks_arr_first_channel[number_sequence])*5, normalized_data[number_sequence,:,0][peaks_arr_first_channel[number_sequence]],'r+')
-        plt.show()
+        for num in number_sequences:
+            plt.plot(t, normalized_data[num,:,0], 'b-',
+                     np.array(peaks_arr_first_channel[num])*5, normalized_data[num,:,0][peaks_arr_first_channel[num]],'r+')
+            plt.show()
 
     for timeserie in normalized_data[:, :, 1]:
         peaks = find_peaks(timeserie, prominence=0.009)
