@@ -6,7 +6,9 @@ import FeatureSelection as fSe
 from sklearn.neural_network import MLPClassifier
 import sklearn.metrics as acc
 
-SELECT_FEATURES = False
+SELECT_FEATURES_ALL = True
+SELECT_FEATURES_PER_SENSOR = False
+
 
 ## Load the data and preprocess it
 dataLoader = loader.DataLoader()
@@ -85,22 +87,49 @@ if (True):
     linearAccelerationFeatureVector = dataLoader.loadData("Features\\Training", "linearAcceleration")
     magnetometerFeatureVector = dataLoader.loadData("Features\\Training", "magnetometer")
 
-## Feature Selection
-if SELECT_FEATURES:
-    fSelector = fSe.FeatureSelection()
-    pcaAccelerometer = fSelector.selectFeaturesByPCA(accelerometerFeatureVector)
+
 
 
 ## Train the Classifier
 if(True):
-    classifier = MLPClassifier(solver='adam', learning_rate='adaptive', hidden_layer_sizes=(400,400), batch_size = 100, max_iter=2000, shuffle=True, random_state=True, verbose= 10)
+    classifier = MLPClassifier(solver='lbfgs', learning_rate='adaptive', hidden_layer_sizes=(400,400), batch_size = 10,  max_iter=2000, shuffle=True, random_state=True, verbose= 10)
     ##Load Labels
     labels = dataLoader.loadTrainingLabels()
-    ## Create appropiate matrix for MLP training  => n_samples x m_features = 1692 x 75
-    data = np.zeros(shape = (1692,225))
-    for i in range(0, 1692):
-        data[i, :] = np.concatenate(([accelerometerFeatureVector[i, :], gravityFeatureVector[i, :], gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :], magnetometerFeatureVector[i, :]]), axis = 0)
 
+    ## Feature Selection
+    if (SELECT_FEATURES_ALL):
+        import FeatureSelector as fs
+
+        selector = fs.FeatureSelector()
+
+        data = selector.selectAllFeatures(np.concatenate(
+            (accelerometerFeatureVector,
+             gravityFeatureVector,
+             gyroscopeFeatureVector,
+             linearAccelerationFeatureVector,
+             magnetometerFeatureVector), axis=1))
+    if (SELECT_FEATURES_PER_SENSOR):
+        accelerometerFeatureVector = selector.selectFeatures(accelerometerFeatureVector)
+        gravityFeatureVector = selector.selectFeatures(gravityFeatureVector)
+        gyroscopeFeatureVector = selector.selectFeatures(gyroscopeFeatureVector)
+        linearAccelerationFeatureVector = selector.selectFeatures(linearAccelerationFeatureVector)
+        magnetometerFeatureVector = selector.selectFeatures(magnetometerFeatureVector)
+
+        ## Create appropiate matrix for MLP training  => n_samples x m_features = 1692 x 75
+        data = np.zeros(shape = (1692,50))
+        for i in range(0, 1692):
+            data[i, :] = np.concatenate(([accelerometerFeatureVector[i, :], gravityFeatureVector[i, :], gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :], magnetometerFeatureVector[i, :]]), axis = 0)
+
+
+
+
+    if (~SELECT_FEATURES_ALL & ~SELECT_FEATURES_PER_SENSOR):
+        ## Create appropiate matrix for MLP training  => n_samples x m_features = 1692 x 75
+        data = np.zeros(shape=(1692, 225))
+        for i in range(0, 1692):
+            data[i, :] = np.concatenate(([accelerometerFeatureVector[i, :], gravityFeatureVector[i, :],
+                                          gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :],
+                                          magnetometerFeatureVector[i, :]]), axis=0)
     classifier.fit(data, labels)
 
 ## Classify Data -----------------------------------
@@ -112,7 +141,7 @@ if(False):
     accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = preProcess.doAllPreProcessing(accelerometer, gravity, gyroscope, linearAcceleration, magnetometer)
 
 ## Do simple preProcessing
-if (False):
+if (True):
     preProcess = preProcessor.PreProcessing()
     accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = dataLoader.loadOriginalTestData()
     accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = preProcess.simplePreProcessing(accelerometer,
@@ -122,7 +151,7 @@ if (False):
 
 # Save PreProcessed Data
 ##
-if (False):
+if (True):
     dataLoader.saveData("PreProcessedData\\Testing", "accelerometer", accelerometer)
     dataLoader.saveData("PreProcessedData\\Testing", "gravity", gravity)
     dataLoader.saveData("PreProcessedData\\Testing", "gyroscope", gyroscope)
@@ -130,7 +159,7 @@ if (False):
     dataLoader.saveData("PreProcessedData\\Testing", "magnetometer", magnetometer)
 
 ## Load the preprocessed data
-if (False):
+if (True):
     accelerometer = dataLoader.loadData("PreProcessedData\\Testing", "accelerometer")
     gravity = dataLoader.loadData("PreProcessedData\\Testing", "gravity")
     gyroscope = dataLoader.loadData("PreProcessedData\\Testing", "gyroscope")
@@ -139,7 +168,7 @@ if (False):
 
 
 ## Feature Extraction and Save Features Vectors
-if (False):
+if (True):
     fExtractor = fEx.FeatureExtractor()
     accelerometerFeatureVector = fExtractor.extractFeatures(accelerometer)
     gravityFeatureVector = fExtractor.extractFeatures(gravity)
@@ -164,15 +193,47 @@ if (True):
     magnetometerFeatureVector = dataLoader.loadData("Features\\Testing", "magnetometer")
 
 
-##Load Labels
-labels = dataLoader.loadTestLabels()
+
+
+
 
 if(True):
-    ## Create appropiate matrix for MLP classification  => n_samples x m_features = 1705 x 75
-    data = np.zeros(shape = (1705, 225))
-    for i in range(0, 1705):
-        data[i, :] = np.concatenate(([accelerometerFeatureVector[i, :], gravityFeatureVector[i, :], gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :], magnetometerFeatureVector[i, :]]), axis = 0)
+    ##Load Labels
+    labels = dataLoader.loadTestLabels()
 
+    ## Feature Selection
+    if (SELECT_FEATURES_ALL):
+        import FeatureSelector as fs
+
+        selector = fs.FeatureSelector()
+
+        data = selector.selectAllFeatures(np.concatenate(
+            (accelerometerFeatureVector,
+             gravityFeatureVector,
+             gyroscopeFeatureVector,
+             linearAccelerationFeatureVector,
+             magnetometerFeatureVector), axis=1))
+
+    if (SELECT_FEATURES_PER_SENSOR):
+        accelerometerFeatureVector = selector.selectFeatures(accelerometerFeatureVector)
+        gravityFeatureVector = selector.selectFeatures(gravityFeatureVector)
+        gyroscopeFeatureVector = selector.selectFeatures(gyroscopeFeatureVector)
+        linearAccelerationFeatureVector = selector.selectFeatures(linearAccelerationFeatureVector)
+        magnetometerFeatureVector = selector.selectFeatures(magnetometerFeatureVector)
+
+        ## Create appropiate matrix for MLP training  => n_samples x m_features = 1692 x 75
+        data = np.zeros(shape = (1705,50))
+        for i in range(0, 1692):
+            data[i, :] = np.concatenate(([accelerometerFeatureVector[i, :], gravityFeatureVector[i, :], gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :], magnetometerFeatureVector[i, :]]), axis = 0)
+
+
+    if (~SELECT_FEATURES_ALL & ~SELECT_FEATURES_PER_SENSOR):
+        ## Create appropiate matrix for MLP training  => n_samples x m_features = 1692 x 75
+        data = np.zeros(shape=(1705, 225))
+        for i in range(0, 1692):
+            data[i, :] = np.concatenate(([accelerometerFeatureVector[i, :], gravityFeatureVector[i, :],
+                                          gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :],
+                                          magnetometerFeatureVector[i, :]]), axis=0)
     predictedLabels = classifier.predict(data)
 
 
