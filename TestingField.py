@@ -2,23 +2,15 @@ import DataLoader as loader
 import numpy as np
 import PreProcessing as preProcessor
 import FeatureExtractor as fEx
-import FeatureSelection as fSe
 from sklearn.neural_network import MLPClassifier
 import sklearn.metrics as acc
 
-SELECT_FEATURES_ALL = False
+SELECT_FEATURES_ALL = True
 SELECT_FEATURES_PER_SENSOR = False
 
 
 ## Load the data and preprocess it
 dataLoader = loader.DataLoader()
-
-##Do all PreProcessing in one step
-if(False):
-    preProcess = preProcessor.PreProcessing()
-    accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = dataLoader.loadOriginalTrainingData()
-    accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = preProcess.doAllPreProcessing(accelerometer, gravity, gyroscope, linearAcceleration, magnetometer)
-
 
 ## Do simple preProcessing
 if(False):
@@ -30,18 +22,6 @@ if(False):
                                                                                                         linearAcceleration,
                                                                                                         magnetometer)
 
-## Do PreProcessing in two steps
-if (False):
-    preProcess = preProcessor.PreProcessing()
-
-    accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = dataLoader.loadOriginalTrainingData()
-    accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = preProcess.adaptSampleRate(
-        accelerometer, gravity, gyroscope, linearAcceleration, magnetometer)
-
-    ## Normalize and Scale
-    if (True):
-        accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = preProcess.normalizeAndScal(
-            accelerometer, gravity, gyroscope, linearAcceleration, magnetometer)
 
 # Save PreProcessed Data
 if (False):
@@ -92,7 +72,7 @@ if (True):
 
 ## Train the Classifier
 if(True):
-    classifier = MLPClassifier(solver='adam', learning_rate='adaptive', hidden_layer_sizes=(450,400), batch_size = 10,  max_iter=2000, shuffle=True, random_state=True, verbose= 10)
+    classifier = MLPClassifier(solver='adam', learning_rate='adaptive', hidden_layer_sizes=(450,450), batch_size = 100,  max_iter=2000, shuffle=True, random_state=True, verbose= 10)
     ##Load Labels
     labels = dataLoader.loadTrainingLabels()
 
@@ -134,11 +114,6 @@ if(True):
 
 ## Classify Data -----------------------------------
 
-## Load the test data and do PreProcessing
-if(False):
-    preProcess = preProcessor.PreProcessing()
-    accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = dataLoader.loadOriginalTestData()
-    accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = preProcess.doAllPreProcessing(accelerometer, gravity, gyroscope, linearAcceleration, magnetometer)
 
 ## Do simple preProcessing
 if (False):
