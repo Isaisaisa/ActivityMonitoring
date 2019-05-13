@@ -6,7 +6,7 @@ import FeatureSelection as fSe
 from sklearn.neural_network import MLPClassifier
 import sklearn.metrics as acc
 
-SELECT_FEATURES_ALL = True
+SELECT_FEATURES_ALL = False
 SELECT_FEATURES_PER_SENSOR = False
 
 
@@ -141,7 +141,7 @@ if(False):
     accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = preProcess.doAllPreProcessing(accelerometer, gravity, gyroscope, linearAcceleration, magnetometer)
 
 ## Do simple preProcessing
-if (True):
+if (False):
     preProcess = preProcessor.PreProcessing()
     accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = dataLoader.loadOriginalTestData()
     accelerometer, gravity, gyroscope, linearAcceleration, magnetometer = preProcess.simplePreProcessing(accelerometer,
@@ -151,7 +151,7 @@ if (True):
 
 # Save PreProcessed Data
 ##
-if (True):
+if (False):
     dataLoader.saveData("PreProcessedData\\Testing", "accelerometer", accelerometer)
     dataLoader.saveData("PreProcessedData\\Testing", "gravity", gravity)
     dataLoader.saveData("PreProcessedData\\Testing", "gyroscope", gyroscope)
@@ -159,7 +159,7 @@ if (True):
     dataLoader.saveData("PreProcessedData\\Testing", "magnetometer", magnetometer)
 
 ## Load the preprocessed data
-if (True):
+if (False):
     accelerometer = dataLoader.loadData("PreProcessedData\\Testing", "accelerometer")
     gravity = dataLoader.loadData("PreProcessedData\\Testing", "gravity")
     gyroscope = dataLoader.loadData("PreProcessedData\\Testing", "gyroscope")
@@ -168,7 +168,7 @@ if (True):
 
 
 ## Feature Extraction and Save Features Vectors
-if (True):
+if (False):
     fExtractor = fEx.FeatureExtractor()
     accelerometerFeatureVector = fExtractor.extractFeatures(accelerometer)
     gravityFeatureVector = fExtractor.extractFeatures(gravity)
@@ -240,5 +240,7 @@ if(True):
 
 
 accuracy = acc.accuracy_score(labels, predictedLabels)
+fscore = acc.f1_score(y_true = labels,y_pred = predictedLabels, average='micro')
 print(accuracy)
+print(fscore)
 
