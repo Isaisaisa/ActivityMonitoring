@@ -14,7 +14,7 @@ class FeatureExtractor:
     ## Extract features from the data (3d data --> [N,T,S]), Calculate a feature vector for every channel (3 channels per sensor)
     ## 1692 executions, 3 channels --> 5076 feature vectors with xxx dimensions
     def extractFeatures(self,data):
-        iVar = 15;
+        iVar = 15
         featureVectors = np.zeros(shape=(data.shape[0],45))
         # data.shape[0] -> 1692 total number of executions activities
         for i in range(0,data.shape[0]):

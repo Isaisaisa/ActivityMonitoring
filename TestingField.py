@@ -54,7 +54,7 @@ if (False):
 
 
 ## Load the preprocessed data
-if (True):
+if (False):
     accelerometer = dataLoader.loadData("PreProcessedData\\Training", "accelerometer")
     gravity = dataLoader.loadData("PreProcessedData\\Training", "gravity")
     gyroscope = dataLoader.loadData("PreProcessedData\\Training", "gyroscope")
@@ -63,7 +63,7 @@ if (True):
 
 
 ## Feature Extraction and Save Features Vectors
-if (True):
+if (False):
     fExtractor = fEx.FeatureExtractor()
     accelerometerFeatureVector = fExtractor.extractFeatures(accelerometer)
     gravityFeatureVector = fExtractor.extractFeatures(gravity)
@@ -159,7 +159,7 @@ if (False):
     dataLoader.saveData("PreProcessedData\\Testing", "magnetometer", magnetometer)
 
 ## Load the preprocessed data
-if (True):
+if (False):
     accelerometer = dataLoader.loadData("PreProcessedData\\Testing", "accelerometer")
     gravity = dataLoader.loadData("PreProcessedData\\Testing", "gravity")
     gyroscope = dataLoader.loadData("PreProcessedData\\Testing", "gyroscope")
@@ -168,7 +168,7 @@ if (True):
 
 
 ## Feature Extraction and Save Features Vectors
-if (True):
+if (False):
     fExtractor = fEx.FeatureExtractor()
     accelerometerFeatureVector = fExtractor.extractFeatures(accelerometer)
     gravityFeatureVector = fExtractor.extractFeatures(gravity)
