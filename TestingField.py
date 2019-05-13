@@ -54,7 +54,7 @@ if (False):
 
 
 ## Load the preprocessed data
-if (False):
+if (True):
     accelerometer = dataLoader.loadData("PreProcessedData\\Training", "accelerometer")
     gravity = dataLoader.loadData("PreProcessedData\\Training", "gravity")
     gyroscope = dataLoader.loadData("PreProcessedData\\Training", "gyroscope")
@@ -63,7 +63,7 @@ if (False):
 
 
 ## Feature Extraction and Save Features Vectors
-if (False):
+if (True):
     fExtractor = fEx.FeatureExtractor()
     accelerometerFeatureVector = fExtractor.extractFeatures(accelerometer)
     gravityFeatureVector = fExtractor.extractFeatures(gravity)
@@ -92,7 +92,7 @@ if (True):
 
 ## Train the Classifier
 if(True):
-    classifier = MLPClassifier(solver='lbfgs', learning_rate='adaptive', hidden_layer_sizes=(400,400), batch_size = 10,  max_iter=2000, shuffle=True, random_state=True, verbose= 10)
+    classifier = MLPClassifier(solver='adam', learning_rate='adaptive', hidden_layer_sizes=(450,400), batch_size = 10,  max_iter=2000, shuffle=True, random_state=True, verbose= 10)
     ##Load Labels
     labels = dataLoader.loadTrainingLabels()
 
@@ -159,7 +159,7 @@ if (False):
     dataLoader.saveData("PreProcessedData\\Testing", "magnetometer", magnetometer)
 
 ## Load the preprocessed data
-if (False):
+if (True):
     accelerometer = dataLoader.loadData("PreProcessedData\\Testing", "accelerometer")
     gravity = dataLoader.loadData("PreProcessedData\\Testing", "gravity")
     gyroscope = dataLoader.loadData("PreProcessedData\\Testing", "gyroscope")
@@ -168,7 +168,7 @@ if (False):
 
 
 ## Feature Extraction and Save Features Vectors
-if (False):
+if (True):
     fExtractor = fEx.FeatureExtractor()
     accelerometerFeatureVector = fExtractor.extractFeatures(accelerometer)
     gravityFeatureVector = fExtractor.extractFeatures(gravity)
