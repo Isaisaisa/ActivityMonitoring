@@ -1,4 +1,7 @@
 numpy
+scipy
 sklearn
 tsfresh
 scipy
+keras
+matplotlib
