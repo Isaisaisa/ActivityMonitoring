@@ -5,3 +5,4 @@ tsfresh
 scipy
 keras
 matplotlib
+tensorflow

@@ -4,23 +4,24 @@ import PreProcessing as preProcessor
 import FeatureExtractor as fEx
 from sklearn.neural_network import MLPClassifier
 import sklearn.metrics as acc
+import MlpClassifier as mlpc
 
 SELECT_FEATURES_ALL = True
 SELECT_FEATURES_PER_SENSOR = False
 
 ### Training
-SIMPLE_PREPROCESSING = True
-SAVE_PREPROCESSING = True
-LOAD_PREPROCESSING = True
-FEATURE_EXTRACTION = True
+SIMPLE_PREPROCESSING = False
+SAVE_PREPROCESSING = False
+LOAD_PREPROCESSING = False
+FEATURE_EXTRACTION = False
 LOAD_FEATURES = True
 TRAIN_CLASSIFIER = True
 
 ### Evaluation
-TEST_DATA_SIMPLE_PREPROCESSING = True
-TEST_DATA_SAVE_PREPROCESSING = True
-TEST_DATA_LOAD_PREPROCESSING = True
-TEST_DATA_FEATURE_EXTRACTION = True
+TEST_DATA_SIMPLE_PREPROCESSING = False
+TEST_DATA_SAVE_PREPROCESSING = False
+TEST_DATA_LOAD_PREPROCESSING = False
+TEST_DATA_FEATURE_EXTRACTION = False
 TEST_DATA_LOAD_FEATURES = True
 
 ## Load the data and preprocess it
@@ -102,6 +103,10 @@ if(TRAIN_CLASSIFIER):
              gyroscopeFeatureVector,
              linearAccelerationFeatureVector,
              magnetometerFeatureVector), axis=1))
+
+    mlp = mlpc.MlpClassifier(data, labels)
+    mlp.train()
+
     if (SELECT_FEATURES_PER_SENSOR):
         accelerometerFeatureVector = selector.selectFeatures(accelerometerFeatureVector)
         gravityFeatureVector = selector.selectFeatures(gravityFeatureVector)
@@ -125,6 +130,8 @@ if(TRAIN_CLASSIFIER):
                                           gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :],
                                           magnetometerFeatureVector[i, :]]), axis=0)
     classifier.fit(data, labels)
+
+
 
 ## Classify Data -----------------------------------
 
