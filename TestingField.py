@@ -6,7 +6,7 @@ from sklearn.neural_network import MLPClassifier
 import sklearn.metrics as acc
 import MlpClassifier as mlpc
 
-SELECT_FEATURES_ALL = True
+SELECT_FEATURES_ALL = False
 SELECT_FEATURES_PER_SENSOR = False
 
 ### Training
@@ -23,7 +23,9 @@ TEST_DATA_SAVE_PREPROCESSING = False
 TEST_DATA_LOAD_PREPROCESSING = False
 TEST_DATA_FEATURE_EXTRACTION = False
 TEST_DATA_LOAD_FEATURES = True
+TEST_CLASSIFIER = True
 
+mlp = None
 ## Load the data and preprocess it
 dataLoader = loader.DataLoader()
 
@@ -104,9 +106,6 @@ if(TRAIN_CLASSIFIER):
              linearAccelerationFeatureVector,
              magnetometerFeatureVector), axis=1))
 
-    mlp = mlpc.MlpClassifier(data, labels)
-    mlp.train()
-
     if (SELECT_FEATURES_PER_SENSOR):
         accelerometerFeatureVector = selector.selectFeatures(accelerometerFeatureVector)
         gravityFeatureVector = selector.selectFeatures(gravityFeatureVector)
@@ -129,7 +128,9 @@ if(TRAIN_CLASSIFIER):
             data[i, :] = np.concatenate(([accelerometerFeatureVector[i, :], gravityFeatureVector[i, :],
                                           gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :],
                                           magnetometerFeatureVector[i, :]]), axis=0)
-    classifier.fit(data, labels)
+    #classifier.fit(data, labels)
+    mlp = mlpc.MlpClassifier()
+    mlp.train(data, labels)
 
 
 
@@ -193,7 +194,7 @@ if (TEST_DATA_LOAD_FEATURES):
 
 
 
-if(True):
+if(TEST_CLASSIFIER):
     ##Load Labels
     labels = dataLoader.loadTestLabels()
 
@@ -219,24 +220,25 @@ if(True):
 
         ## Create appropiate matrix for MLP training  => n_samples x m_features = 1692 x 75
         data = np.zeros(shape = (1705,50))
-        for i in range(0, 1692):
+        for i in range(0, 1705):
             data[i, :] = np.concatenate(([accelerometerFeatureVector[i, :], gravityFeatureVector[i, :], gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :], magnetometerFeatureVector[i, :]]), axis = 0)
 
 
     if (~SELECT_FEATURES_ALL & ~SELECT_FEATURES_PER_SENSOR):
         ## Create appropiate matrix for MLP training  => n_samples x m_features = 1692 x 75
         data = np.zeros(shape=(1705, 225))
-        for i in range(0, 1692):
+        for i in range(0, 1705):
             data[i, :] = np.concatenate(([accelerometerFeatureVector[i, :], gravityFeatureVector[i, :],
                                           gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :],
                                           magnetometerFeatureVector[i, :]]), axis=0)
-    predictedLabels = classifier.predict(data)
+    #predictedLabels = classifier.predict(data)
+    mlp.eval(data, labels)
 
 
 
 
-accuracy = acc.accuracy_score(labels, predictedLabels)
-fscore = acc.f1_score(y_true = labels,y_pred = predictedLabels, average='micro')
-print(accuracy)
-print(fscore)
+#accuracy = acc.accuracy_score(labels, predictedLabels)
+#fscore = acc.f1_score(y_true = labels,y_pred = predictedLabels, average='micro')
+#print(accuracy)
+#print(fscore)
 
