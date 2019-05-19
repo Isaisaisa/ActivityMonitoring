@@ -15,11 +15,12 @@ class FeatureExtractor:
     ## 1692 executions, 3 channels --> 5076 feature vectors with xxx dimensions
     def extractFeatures(self,data):
         iVar = 15
-        featureVectors = np.zeros(shape=(data.shape[0],45))
-        # data.shape[0] -> 1692 total number of executions activities
+        channels = 3
+        featureVectors = np.zeros(shape=(data.shape[0], iVar*channels))
+
         for i in range(0,data.shape[0]):
             # number of channels
-            for j in range(0, 3):
+            for j in range(0, channels):
                 ## Calculate features
                 featureVectors[i, j * iVar + 0] = tsCalc.mean(data[i, :, j])
                 featureVectors[i, j * iVar + 1] = tsCalc.standard_deviation(data[i, :, j])

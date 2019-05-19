@@ -11,15 +11,15 @@ class PreProcessing:
 
     def adaptSampleRate(self, accelerometer, gravity, gyroscope, linearAcceleration, magnetometer):
         if len(accelerometer[1, :, 1]) != self.sampleRate:
-            accelerometer = signal.resample(x=accelerometer[:, :, :], num=800, axis=1)
+            accelerometer = signal.resample(x=accelerometer[:, :, :], num=self.sampleRate, axis=1)
         if len(gravity[1, :, 1]) != self.sampleRate:
-            gravity = signal.resample(x=gravity[:, :, :], num=800, axis=1)
+            gravity = signal.resample(x=gravity[:, :, :], num=self.sampleRate, axis=1)
         if len(gyroscope[1, :, 1]) != self.sampleRate:
-            gyroscope = signal.resample(x=gyroscope[:, :, :], num=800, axis=1)
+            gyroscope = signal.resample(x=gyroscope[:, :, :], num=self.sampleRate, axis=1)
         if len(linearAcceleration[1, :, 1]) != self.sampleRate:
-            linearAcceleration = signal.resample(x=linearAcceleration[:, :, :], num=800, axis=1)
+            linearAcceleration = signal.resample(x=linearAcceleration[:, :, :], num=self.sampleRate, axis=1)
         if len(magnetometer[1, :, 1]) != self.sampleRate:
-            magnetometer = signal.resample(x=magnetometer[:, :, :], num=800, axis=1)
+            magnetometer = signal.resample(x=magnetometer[:, :, :], num=self.sampleRate, axis=1)
         return accelerometer, gravity, gyroscope, linearAcceleration, magnetometer
 
 
