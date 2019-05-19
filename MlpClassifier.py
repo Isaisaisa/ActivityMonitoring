@@ -4,6 +4,7 @@ from keras.utils import np_utils
 import numpy as np
 from keras import optimizers
 
+
 class MlpClassifier():
 
     def __init__(self):
@@ -15,16 +16,22 @@ class MlpClassifier():
         self.model.add(Dense(225, input_shape=(225,)))
         self.model.add(BatchNormalization())
         self.model.add(Activation(activation='sigmoid'))
-        self.model.add(Dropout(0.15))
+        self.model.add(Dropout(0.40))
         self.model.add(Dense(450))
         self.model.add(BatchNormalization())
         self.model.add(Activation(activation='sigmoid'))
-        self.model.add(Dropout(0.20))
+        self.model.add(Dropout(0.40))
         self.model.add(Dense(self.num_classes, activation='softmax'))
 
-        adam = optimizers.Adam(lr=0.0008, beta_1=0.9, beta_2=0.999)
+        adam = optimizers.Adam(lr=0.0006, beta_1=0.9, beta_2=0.999)
         # Compile model
-        self.model.compile(loss='mse',
+        # loss function -> accuracy
+        # mean_squared_error -> 0.32785923755413626
+        # categorical_crossentropy -> 0.3331378299295028
+        # mean_absolute_error -> 0.18768328446621768
+        # sparse_categorical_crossentropy -> dim error
+        # mean_squared_logarithmic_error -> 0.3272727272902066
+        self.model.compile(loss='categorical_crossentropy',
                       optimizer=adam,
                       metrics=['accuracy'])
 
