@@ -1,7 +1,8 @@
 from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from keras.layers import Dense, Dropout, BatchNormalization, Activation
 from keras.utils import np_utils
 import numpy as np
+from keras import optimizers
 
 class MlpClassifier():
 
@@ -11,15 +12,20 @@ class MlpClassifier():
 
         # Define model architecture
         self.model = Sequential()
-        self.model.add(Dense(225, activation='sigmoid', input_shape=(225,)))
+        self.model.add(Dense(225, input_shape=(225,)))
+        self.model.add(BatchNormalization())
+        self.model.add(Activation(activation='sigmoid'))
         self.model.add(Dropout(0.15))
-        self.model.add(Dense(450, activation='sigmoid'))
+        self.model.add(Dense(450))
+        self.model.add(BatchNormalization())
+        self.model.add(Activation(activation='sigmoid'))
         self.model.add(Dropout(0.20))
         self.model.add(Dense(self.num_classes, activation='softmax'))
 
+        adam = optimizers.Adam(lr=0.0008, beta_1=0.9, beta_2=0.999)
         # Compile model
         self.model.compile(loss='mse',
-                      optimizer='adam',
+                      optimizer=adam,
                       metrics=['accuracy'])
 
     def train(self, data, labels):
@@ -36,3 +42,9 @@ class MlpClassifier():
 
         score = self.model.evaluate(in_test, labels, verbose=0)
         print('Score acc: ', score[1])
+        return score[1]
+
+    def predict(self, in_test):
+        lables = self.model.predict(in_test)
+        # returns the most likely labels along all ~1700 samples
+        return np.argmax(lables, axis=1)

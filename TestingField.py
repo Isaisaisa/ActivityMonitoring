@@ -232,13 +232,14 @@ if(TEST_CLASSIFIER):
                                           gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :],
                                           magnetometerFeatureVector[i, :]]), axis=0)
     #predictedLabels = classifier.predict(data)
-    mlp.eval(data, labels)
+    accuracy = mlp.eval(data, labels)
+    predictedLabels = mlp.predict(data)
 
 
 
 
 #accuracy = acc.accuracy_score(labels, predictedLabels)
 #fscore = acc.f1_score(y_true = labels,y_pred = predictedLabels, average='micro')
-#print(accuracy)
+print(accuracy)
 #print(fscore)
 
