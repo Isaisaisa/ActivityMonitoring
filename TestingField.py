@@ -92,7 +92,7 @@ if(TRAIN_CLASSIFIER):
     classifier = MLPClassifier(solver='adam', learning_rate='adaptive', hidden_layer_sizes=(450,450),tol=0.0000100, batch_size = 1000,  max_iter=2000, shuffle=True, random_state=True, verbose= 10)
     ##Load Labels
     labels = dataLoader.loadTrainingLabels()
-
+    data = None
     ## Feature Selection
     if (SELECT_FEATURES_ALL):
         import FeatureSelector as fs
