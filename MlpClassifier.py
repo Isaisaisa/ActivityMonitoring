@@ -42,7 +42,6 @@ class MlpClassifier():
         self.model.fit(data, labels,
                   batch_size=100, epochs=500, verbose=1)
 
-
     def eval(self, in_test, out_test):
         # Evaluate model on test data
         labels = np_utils.to_categorical(out_test, 55)
@@ -52,6 +51,12 @@ class MlpClassifier():
         return score[1]
 
     def predict(self, in_test):
-        lables = self.model.predict(in_test)
+        labels = self.model.predict(in_test)
         # returns the most likely labels along all ~1700 samples
-        return np.argmax(lables, axis=1)
+        print('labels: ', labels)
+        return labels
+
+    def predicted_labels(self, in_test):
+        labels = self.model.predict(in_test)
+        # returns the most likely labels along all ~1700 samples
+        return np.argmax(labels, axis=1)
