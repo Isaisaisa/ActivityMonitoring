@@ -1,5 +1,6 @@
 ## This is the DataLoader
 ## With this
+import os
 
 import numpy as np
 import config_dev as config
@@ -42,5 +43,7 @@ class DataLoader:
         return data
 
 
-    def saveData(self, savePath,saveName, data):
+    def saveData(self, savePath, saveName, data):
+        if not os.path.exists(self.savePath + savePath):
+            os.makedirs(self.savePath + savePath, exist_ok=True)
         np.save(self.savePath + savePath + "\\" + saveName, data)

@@ -6,6 +6,7 @@ from sklearn.neural_network import MLPClassifier
 import sklearn.metrics as acc
 import matplotlib.pyplot as plt
 import meanAveragePrecision as meanP
+import MlpClassifier as mlpc
 
 
 # Load the data and Preprocessing
@@ -25,6 +26,12 @@ SELECT_FEATURES_ALL = True
 SELECT_FEATURES_PER_SENSOR = False
 # Train the MLP and use it to classify test data
 TRAIN_AND_CLASSIFY = True
+# Swap between two version of MLP
+# 1. sklearn MLP
+# 2. Keras MLP
+USE_KERAS_MLP = True
+
+mlp = None
 
 # MLP settings
 
@@ -138,26 +145,29 @@ if(TRAIN_AND_CLASSIFY):
                                           gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :],
                                           magnetometerFeatureVector[i, :]]), axis=0)
 
-    classifier.fit(data, labels)
+    if USE_KERAS_MLP:
+        mlp = mlpc.MlpClassifier()
+        mlp.train(data, labels)
+    else:
+        classifier.fit(data, labels)
 
-
-    print('----Training completed----')
-    print('Results on the training data')
-    ##Classify training data with one class
-    predictedLabels = classifier.predict(data)
-    ##Predict probabilities for every class
-    predictedProbs = classifier.predict_proba(data)
-    predictedProbsCorrection = (np.append(np.append(predictedProbs[:, 0:8], np.zeros((1692, 1)), axis=1), predictedProbs[:, 8:53], axis=1))
-    ##predictedProbs2 = classifier.predict_log_proba(data)
-    ##Mean Average Precision
-    ar, flo = meanP.computeMeanAveragePrecision(labels=labels, softmaxEstimations=predictedProbsCorrection)
-    ##Accuracy
-    accuracy = acc.accuracy_score(labels, predictedLabels)
-    ##F1Score
-    fscore = acc.f1_score(y_true=labels, y_pred=predictedLabels, average='micro')
-    print('Accuracy: ', accuracy)
-    print('F1-Score: ', fscore)
-    print('Mean Average Precision:', ar)
+        print('----Training completed----')
+        print('Results on the training data')
+        ##Classify training data with one class
+        predictedLabels = classifier.predict(data)
+        ##Predict probabilities for every class
+        predictedProbs = classifier.predict_proba(data)
+        predictedProbsCorrection = (np.append(np.append(predictedProbs[:, 0:8], np.zeros((1692, 1)), axis=1), predictedProbs[:, 8:53], axis=1))
+        ##predictedProbs2 = classifier.predict_log_proba(data)
+        ##Mean Average Precision
+        ar, flo = meanP.computeMeanAveragePrecision(labels=labels, softmaxEstimations=predictedProbsCorrection)
+        ##Accuracy
+        accuracy = acc.accuracy_score(labels, predictedLabels)
+        ##F1Score
+        fscore = acc.f1_score(y_true=labels, y_pred=predictedLabels, average='micro')
+        print('Accuracy: ', accuracy)
+        print('F1-Score: ', fscore)
+        print('Mean Average Precision:', ar)
 
 # Classify Data -----------------------------------
 
@@ -255,23 +265,26 @@ if(TRAIN_AND_CLASSIFY):
                                           magnetometerFeatureVector[i, :]]), axis=0)
 
     ##Classify test data
-    predictedLabels = classifier.predict(data)
-    ##Predict Probabilites
-    predictedProbs = classifier.predict_proba(data)
-    ##In the data is no sample for class 9, add a probability for this with 0
-    predictedProbsCorrection = (np.append(np.append(predictedProbs[:, 0:8], np.zeros((1705, 1)), axis=1), predictedProbs[:, 8:53], axis=1))
+    if USE_KERAS_MLP:
+        predictedLabels = mlp.predicted_labels(data)
+        predictedProbs = mlp.predict(data)
+        accuracy = mlp.eval(data, labels)
+        ar, flo = meanP.computeMeanAveragePrecision(labels=labels, softmaxEstimations=predictedProbs)
+        fscore = 'Not defined'
+    else:
+        predictedLabels = classifier.predict(data)
+        ##Predict Probabilites
+        predictedProbs = classifier.predict_proba(data)
 
+        ##In the data is no sample for class 9, add a probability for this with 0
+        predictedProbsCorrection = (np.append(np.append(predictedProbs[:, 0:8], np.zeros((1705, 1)), axis=1), predictedProbs[:, 8:53], axis=1))
 
-    ar, flo = meanP.computeMeanAveragePrecision(labels=labels, softmaxEstimations= predictedProbsCorrection )
-    accuracy = acc.accuracy_score(labels, predictedLabels)
-    fscore = acc.f1_score(y_true = labels,y_pred = predictedLabels, average='micro')
+        ar, flo = meanP.computeMeanAveragePrecision(labels=labels, softmaxEstimations= predictedProbsCorrection )
+        accuracy = acc.accuracy_score(labels, predictedLabels)
+        fscore = acc.f1_score(y_true = labels,y_pred = predictedLabels, average='micro')
+
     print('---------')
     print('Results on the test data')
     print('Accuracy: ', accuracy)
     print('F1-Score: ', fscore)
     print('Mean Average Precision(with correction):', ar)
-    #plt.plot(classifier.loss_curve_)
-    #plt.show()
-
-
-
