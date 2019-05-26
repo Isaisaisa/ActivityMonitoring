@@ -4,36 +4,34 @@ import PreProcessing as preProcessor
 import FeatureExtractor as fEx
 from sklearn.neural_network import MLPClassifier
 import sklearn.metrics as acc
-import matplotlib.pyplot as plt
 import meanAveragePrecision as meanP
 import MlpClassifier as mlpc
 
 
 # Load the data and Preprocessing
-LOAD_DATA_AND_PREPROCESS = False
+LOAD_DATA_AND_PREPROCESS = True
 # Save preprocessed data
-SAVE_PREPROCESSED_DATA = False
+SAVE_PREPROCESSED_DATA = True
 # Load the saved preprocessed data
-LOAD_PREPROCESSED_DATA = False
+LOAD_PREPROCESSED_DATA = True
 # Feature Extraction
-FEATURE_EXTRACTION = False
+FEATURE_EXTRACTION = True
 # Save the extracted Features
-SAVE_FEATURE_VECTORS = False
+SAVE_FEATURE_VECTORS = True
 # Load saved feature vectors
 LOAD_FEATURE_VECTORS = True
 # Feature Selection
-SELECT_FEATURES_ALL = True
-SELECT_FEATURES_PER_SENSOR = False
+SELECT_FEATURES = False
 # Train the MLP and use it to classify test data
 TRAIN_AND_CLASSIFY = True
 # Swap between two version of MLP
-# 1. sklearn MLP
-# 2. Keras MLP
+# 1. sklearn MLP --> False
+# 2. Keras MLP --> True
 USE_KERAS_MLP = True
 
 mlp = None
 
-# MLP settings
+# MLP settings for sklearn MLP (the settings fpr Keras MLP --> MLPClassifier.py)
 
 parameter = {  # 0.25 and 0.11
     'solver' : 'adam',
@@ -114,30 +112,18 @@ if(TRAIN_AND_CLASSIFY):
     labels = dataLoader.loadTrainingLabels()
 
     ## Feature Selection
-    if (SELECT_FEATURES_ALL):
+    if (SELECT_FEATURES):
         import FeatureSelector as fs
 
         selector = fs.FeatureSelector()
-
         data = selector.selectAllFeatures(np.concatenate(
             (accelerometerFeatureVector,
              gravityFeatureVector,
              gyroscopeFeatureVector,
              linearAccelerationFeatureVector,
              magnetometerFeatureVector), axis=1))
-    if (SELECT_FEATURES_PER_SENSOR):
-        accelerometerFeatureVector = selector.selectFeatures(accelerometerFeatureVector)
-        gravityFeatureVector = selector.selectFeatures(gravityFeatureVector)
-        gyroscopeFeatureVector = selector.selectFeatures(gyroscopeFeatureVector)
-        linearAccelerationFeatureVector = selector.selectFeatures(linearAccelerationFeatureVector)
-        magnetometerFeatureVector = selector.selectFeatures(magnetometerFeatureVector)
 
-        ## Create appropiate matrix for MLP training  => n_samples x m_features = 1692 x 75
-        data = np.zeros(shape = (1692,50))
-        for i in range(0, 1692):
-            data[i, :] = np.concatenate(([accelerometerFeatureVector[i, :], gravityFeatureVector[i, :], gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :], magnetometerFeatureVector[i, :]]), axis = 0)
-
-    if (~SELECT_FEATURES_ALL & ~SELECT_FEATURES_PER_SENSOR):
+    else:
         ## Create appropiate matrix for MLP training  => n_samples x m_features = 1692 x 75
         data = np.zeros(shape=(1692, 225))
         for i in range(0, 1692):
@@ -146,28 +132,41 @@ if(TRAIN_AND_CLASSIFY):
                                           magnetometerFeatureVector[i, :]]), axis=0)
 
     if USE_KERAS_MLP:
-        mlp = mlpc.MlpClassifier()
+        mlp = mlpc.MlpClassifier(inputShape=data.shape[1])
         mlp.train(data, labels)
+
+        # Predict class labels and probabilities for the classes
+        predictedLabels = mlp.predicted_labels(data)
+        predictedProbs = mlp.predict(data)
+        # Accuracy
+        accuracy = mlp.eval(data, labels)
+        # Mean Average Precision
+        ar, flo = meanP.computeMeanAveragePrecision(labels=labels, softmaxEstimations=predictedProbs)
+        # F1 Score
+        fscore = 'Not defined'
+
     else:
         classifier.fit(data, labels)
 
-        print('----Training completed----')
-        print('Results on the training data')
-        ##Classify training data with one class
+        # Classify training data with one class
         predictedLabels = classifier.predict(data)
-        ##Predict probabilities for every class
+        # Predict probabilities for every class
         predictedProbs = classifier.predict_proba(data)
         predictedProbsCorrection = (np.append(np.append(predictedProbs[:, 0:8], np.zeros((1692, 1)), axis=1), predictedProbs[:, 8:53], axis=1))
-        ##predictedProbs2 = classifier.predict_log_proba(data)
-        ##Mean Average Precision
+        # Mean Average Precision
         ar, flo = meanP.computeMeanAveragePrecision(labels=labels, softmaxEstimations=predictedProbsCorrection)
-        ##Accuracy
+        # Accuracy
         accuracy = acc.accuracy_score(labels, predictedLabels)
-        ##F1Score
+        # F1Score
         fscore = acc.f1_score(y_true=labels, y_pred=predictedLabels, average='micro')
-        print('Accuracy: ', accuracy)
-        print('F1-Score: ', fscore)
-        print('Mean Average Precision:', ar)
+
+    print('----Training completed----')
+    print('Results on the training data')
+    print('Accuracy: ', accuracy)
+    print('F1-Score: ', fscore)
+    print('Mean Average Precision:', ar)
+
+
 
 # Classify Data -----------------------------------
 
@@ -210,7 +209,6 @@ if (FEATURE_EXTRACTION):
 
 # Save extracted Features
 if(SAVE_FEATURE_VECTORS):
-
     dataLoader.saveData("Features\\Testing", "accelerometer", accelerometerFeatureVector)
     dataLoader.saveData("Features\\Testing", "gravity", gravityFeatureVector)
     dataLoader.saveData("Features\\Testing", "gyroscope", gyroscopeFeatureVector)
@@ -231,7 +229,7 @@ if(TRAIN_AND_CLASSIFY):
     labels = dataLoader.loadTestLabels()
 
     ## Feature Selection
-    if (SELECT_FEATURES_ALL):
+    if (SELECT_FEATURES):
         import FeatureSelector as fs
 
         selector = fs.FeatureSelector()
@@ -243,20 +241,7 @@ if(TRAIN_AND_CLASSIFY):
              linearAccelerationFeatureVector,
              magnetometerFeatureVector), axis=1))
 
-    if (SELECT_FEATURES_PER_SENSOR):
-        accelerometerFeatureVector = selector.selectFeatures(accelerometerFeatureVector)
-        gravityFeatureVector = selector.selectFeatures(gravityFeatureVector)
-        gyroscopeFeatureVector = selector.selectFeatures(gyroscopeFeatureVector)
-        linearAccelerationFeatureVector = selector.selectFeatures(linearAccelerationFeatureVector)
-        magnetometerFeatureVector = selector.selectFeatures(magnetometerFeatureVector)
-
-        ## Create appropiate matrix for MLP training  => n_samples x m_features = 1692 x 75
-        data = np.zeros(shape = (1705,50))
-        for i in range(0, 1692):
-            data[i, :] = np.concatenate(([accelerometerFeatureVector[i, :], gravityFeatureVector[i, :], gyroscopeFeatureVector[i, :], linearAccelerationFeatureVector[i, :], magnetometerFeatureVector[i, :]]), axis = 0)
-
-
-    if (~SELECT_FEATURES_ALL & ~SELECT_FEATURES_PER_SENSOR):
+    else:
         ## Create appropiate matrix for MLP training  => n_samples x m_features = 1692 x 75
         data = np.zeros(shape=(1705, 225))
         for i in range(0, 1692):
@@ -268,19 +253,23 @@ if(TRAIN_AND_CLASSIFY):
     if USE_KERAS_MLP:
         predictedLabels = mlp.predicted_labels(data)
         predictedProbs = mlp.predict(data)
+        # Accuracy
         accuracy = mlp.eval(data, labels)
+        # Mean Average Precision
         ar, flo = meanP.computeMeanAveragePrecision(labels=labels, softmaxEstimations=predictedProbs)
+        # F1 Score
         fscore = 'Not defined'
     else:
         predictedLabels = classifier.predict(data)
-        ##Predict Probabilites
+        # Predict Probabilites
         predictedProbs = classifier.predict_proba(data)
-
-        ##In the data is no sample for class 9, add a probability for this with 0
+        # In the data is no sample for class 9, add a probability for this with 0
         predictedProbsCorrection = (np.append(np.append(predictedProbs[:, 0:8], np.zeros((1705, 1)), axis=1), predictedProbs[:, 8:53], axis=1))
-
+        # Mean Average Precision
         ar, flo = meanP.computeMeanAveragePrecision(labels=labels, softmaxEstimations= predictedProbsCorrection )
+        # Accuracy
         accuracy = acc.accuracy_score(labels, predictedLabels)
+        #F1 Score
         fscore = acc.f1_score(y_true = labels,y_pred = predictedLabels, average='micro')
 
     print('---------')
