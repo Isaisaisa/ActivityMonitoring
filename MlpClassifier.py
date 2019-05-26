@@ -7,13 +7,13 @@ from keras import optimizers
 
 class MlpClassifier():
 
-    def __init__(self):
+    def __init__(self, inputShape):
         np.random.seed(123)
         self.num_classes = 55
 
         # Define model architecture
         self.model = Sequential()
-        self.model.add(Dense(225, input_shape=(225,)))
+        self.model.add(Dense(inputShape, input_shape=(inputShape,)))
         self.model.add(BatchNormalization())
         self.model.add(Activation(activation='sigmoid'))
         self.model.add(Dropout(0.40))
