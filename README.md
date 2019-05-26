@@ -42,7 +42,7 @@ The file ``` TestingField.py ``` starts all the Process at once and includes som
 Set all switches to True when you run the program for the first time.
 Only the last switch ``` USE_KERAS_MLP ``` can be set to True or False. It depends on which MLP you want to train.
 If you use True then the Keras MLP will be used, if you use False then the Sklearn MLP will be trained. 
-The settings for the sklearn MLP (USE_KERAS_MLP = False) can be changed in the ''parameter'' dictionary in 
+The settings for the sklearn MLP can be changed in the ''parameter'' dictionary in 
 ``` TestingField.py ```. The settings for the keras MLP can be changed in the ``` MlpClassifier.py ```.
 
 
