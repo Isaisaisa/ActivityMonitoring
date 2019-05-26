@@ -41,7 +41,7 @@ The file ``` TestingField.py ``` starts all the Process at once and includes som
 
 Set all switches to True when you run the program for the first time.
 Only the last switch ``` USE_KERAS_MLP ``` can be set to True or False. It depends on which MLP you want to train.
-If you use True then the Keras MPL will be used, if you use False then the Sklearn MLP will be trained.
+If you use True then the Keras MLP will be used, if you use False then the Sklearn MLP will be trained.
 
 When you start it for the first time, some new folders will be created under the path you specified under
 ```SAVEPATHH``` in the configuration file (see the heading [Configure config file](#Marker Header Configuration Configuration File)).
