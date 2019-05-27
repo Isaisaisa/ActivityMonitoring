@@ -47,7 +47,7 @@ The settings for the sklearn MLP can be changed in the ''parameter'' dictionary 
 
 
 When you start it for the first time, some new folders will be created under the path you specified under
-```SAVEPATH``` in the configuration file (see the heading [Configure config file](#Marker Header Configuration Configuration File)).
+```SAVEPATH``` in the configuration file (see the heading [Configure config file](#marker-hHeader-configure-config-file)).
 
 If you have already run the program and all files with the features etc. are created, then you can set most of the 
 switches to ```False```, except ```LOAD_FEATURE_VECTORS, TRAIN_AND_CLASSIFY and maybe USE_KERAS_MLP```.
