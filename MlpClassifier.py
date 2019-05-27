@@ -21,10 +21,6 @@ class MlpClassifier():
         self.model.add(BatchNormalization())
         self.model.add(Activation(activation='sigmoid'))
         self.model.add(Dropout(0.40))
-        self.model.add(Dense(450))
-        self.model.add(BatchNormalization())
-        self.model.add(Activation(activation='sigmoid'))
-        self.model.add(Dropout(0.40))
         self.model.add(Dense(self.num_classes, activation='softmax'))
 
         adam = optimizers.Adam(lr=0.0006, beta_1=0.9, beta_2=0.999)
