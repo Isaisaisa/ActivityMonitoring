@@ -20,19 +20,19 @@ For each Process step we have a separated class/file.
 The file ``` TestingField.py ``` starts all the Process at once and includes some boolean variables as switches.
     
     # Load the data and Preprocessing 
-    LOAD_DATA_AND_PREPROCESS = False
+    LOAD_DATA_AND_PREPROCESS = True
     # Save preprocessed data
-    SAVE_PREPROCESSED_DATA = False
+    SAVE_PREPROCESSED_DATA = True
     # Load the saved preprocessed data
-    LOAD_PREPROCESSED_DATA = False
+    LOAD_PREPROCESSED_DATA = True
     # Feature Extraction
-    FEATURE_EXTRACTION = False
+    FEATURE_EXTRACTION = True
     # Save the extracted Features
-    SAVE_FEATURE_VECTORS = False
+    SAVE_FEATURE_VECTORS = True
     # Load saved feature vectors
     LOAD_FEATURE_VECTORS = True
     # Feature Selection
-    SELECT_FEATURES = True
+    SELECT_FEATURES = False
     # Train the MLP and use it to classify test data
     TRAIN_AND_CLASSIFY = True
     # Swap between two version of MLP
